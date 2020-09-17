@@ -2,6 +2,6 @@
 
 project ("InformationSecurity")
 
-add_executable (InformationSecurity "src/main.cpp" "src/crypto/lab1.hpp" "src/crypto/export.hpp" "src/crypto/common.hpp")
+add_executable (InformationSecurity "src/main.cpp" "src/crypto/lab1.hpp" "src/crypto/export.hpp" "src/crypto/common.hpp" "src/crypto/lab2.hpp")
 
 target_compile_features(InformationSecurity PRIVATE cxx_std_20)

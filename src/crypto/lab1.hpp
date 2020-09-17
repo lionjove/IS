@@ -7,7 +7,7 @@ namespace CryptoFunctions
 // log(b)
 constexpr long long PowMod(long long g, long long b, long long p)
 {
-    if (g <= 1 || g >= p)
+    if (g >= p)
         throw std::runtime_error("PowMod:Bad arguments!");
 
     long long res = 1;

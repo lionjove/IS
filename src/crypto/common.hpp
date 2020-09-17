@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <array>
 
 namespace CryptoFunctions
@@ -19,9 +19,20 @@ constexpr long long FastPowll(long long a, long long b)
 
 constexpr bool IsPrime(long long num)
 {
-    for (long long i = 2; i <= num / 2; i++)
-        if (num % i == 0)
+    if (num <= 3ull)
+        return num > 1ull;
+    else if (num % 2ull == 0 || num % 3ull == 0)
+        return false;
+
+    long long i = 5;
+
+    while (i * i <= num)
+    {
+        if (num % i == 0 || num % (i + 2) == 0)
             return false;
+        i = i + 6;
+    }
+        
     return true;
 }
 
@@ -45,5 +56,11 @@ constexpr std::array<long long, size> GetPrimeNumbersStartingFrom(long long star
 
     return result;
 }
+
+
+constexpr const size_t PRIME_NUMBERS_ARRAY_SIZE = 150ull;
+constexpr const long long PRIME_NUMBERS_START_POSITION = 256;
+
+const auto PRIME_NUMBERS = CryptoFunctions::GetPrimeNumbersStartingFrom<PRIME_NUMBERS_ARRAY_SIZE>(PRIME_NUMBERS_START_POSITION);
 
 }
