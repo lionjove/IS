@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include "common.hpp"
+#include "lab1.hpp"
 
 namespace CryptoFunctions
 {
@@ -88,7 +89,7 @@ void Shamir()
     // x3^Db mod P
     {
         std::ifstream inputData("ShamirPass3", std::ios::binary);
-        std::ofstream pass("ShamirResult", std::ios::binary);
+        std::ofstream pass("ShamirResult.PNG", std::ios::binary);
 
         std::vector<char> buffer(std::istreambuf_iterator<char>(inputData), {});
         for (char* begin = buffer.data(); begin != buffer.data() + buffer.size(); begin += 8)
@@ -98,6 +99,58 @@ void Shamir()
             pass.write(reinterpret_cast<char*>(&res), 1);
         }
     }
+}
+
+void ELGamal()
+{
+    const auto p = 257;
+    const auto g = 5;
+
+    const long long bobPrivateKey = 13;
+    const long long bobPublicKey = PowMod(g, bobPrivateKey, p);
+
+    const long long k = 3;
+
+    const long long m = 255;
+
+    {
+        std::ifstream inputData("Capture.PNG", std::ios::binary);
+        if (!inputData.is_open())
+            throw std::runtime_error("can't find file: Capture.PNG!");
+
+        std::ofstream pass("ELGamalCoded", std::ios::binary);
+
+        long long r = PowMod(g, k, p);
+        pass.write(reinterpret_cast<char*>(&r), 8);
+
+        std::vector<char> buffer(std::istreambuf_iterator<char>(inputData.rdbuf()), {});
+        for (const auto& it : buffer)
+        {
+            long long e = (it * PowMod(bobPublicKey, k, p)) % p;
+            pass.write(reinterpret_cast<char*>(&e), 8);
+        }
+    }
+
+    {
+        std::ifstream inputData("ELGamalCoded", std::ios::binary);
+        std::ofstream pass("ELGamalEncoded.PNG", std::ios::binary);
+
+        long long r;
+        inputData.read(reinterpret_cast<char*>(&r), 8);
+
+        std::vector<char> buffer(std::istreambuf_iterator<char>(inputData), {});
+        for (char* begin = buffer.data(); begin != buffer.data() + buffer.size(); begin += 8)
+        {
+            const long long it = *(reinterpret_cast<long long*>(begin));
+            unsigned char res = (it * PowMod(r, p - 1 - bobPrivateKey, p)) % p;
+            pass.write(reinterpret_cast<char*>(&res), 1);
+        }
+    }
+}
+
+void Vernam()
+{
+
 }
 
 }

@@ -32,6 +32,8 @@ int main()
         std::cout << "SmallBigStep = " << smallBigStep << '\n';
 
         CryptoFunctions::Shamir();
+
+        CryptoFunctions::ELGamal();
     }
     catch (const std::runtime_error& err)
     {
