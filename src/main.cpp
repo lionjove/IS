@@ -18,7 +18,7 @@ int main()
 {
     try
     {
-        const auto powMod = CryptoFunctions::PowMod(G, MY_PRIVATE_KEY, P);
+        const auto powMod = CryptoFunctions::PowMod(7, 5, 15);
         std::cout << "PowMod = " << powMod << "\n\n";
 
         const auto gcdResult = CryptoFunctions::gcd(192, 248);
@@ -34,6 +34,10 @@ int main()
         CryptoFunctions::Shamir();
 
         CryptoFunctions::ELGamal();
+
+        CryptoFunctions::Vernam();
+
+        CryptoFunctions::RSA();
     }
     catch (const std::runtime_error& err)
     {

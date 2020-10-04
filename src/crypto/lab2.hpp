@@ -1,7 +1,14 @@
 #pragma once
 #include <fstream>
+#include <filesystem>
+#include <algorithm>
 #include "common.hpp"
 #include "lab1.hpp"
+
+namespace
+{
+const char* FILE_TO_ENCODE = "Capture.PNG";
+}
 
 namespace CryptoFunctions
 {
@@ -44,7 +51,7 @@ void Shamir()
 
     // m^Ca mod P
     {
-        std::ifstream inputData("Capture.PNG", std::ios::binary);
+        std::ifstream inputData(FILE_TO_ENCODE, std::ios::binary);
         if (!inputData.is_open())
             throw std::runtime_error("can't find file: ShamirInputData.txt!");
 
@@ -111,10 +118,8 @@ void ELGamal()
 
     const long long k = 3;
 
-    const long long m = 255;
-
     {
-        std::ifstream inputData("Capture.PNG", std::ios::binary);
+        std::ifstream inputData(FILE_TO_ENCODE, std::ios::binary);
         if (!inputData.is_open())
             throw std::runtime_error("can't find file: Capture.PNG!");
 
@@ -150,7 +155,65 @@ void ELGamal()
 
 void Vernam()
 {
+    std::ifstream inputFile(FILE_TO_ENCODE, std::ios::binary);
+    std::vector<char> buffer(std::istreambuf_iterator<char>(inputFile.rdbuf()), {});
 
+    std::vector<unsigned char> keys(buffer.size());
+    std::generate_n(keys.begin(), buffer.size(), [] { return static_cast<unsigned char>(rand() % 255); });
+
+    for (size_t i = 0; i < buffer.size(); i++)
+        buffer[i] ^= keys[i];
+
+    std::ofstream("VernamEncrypted.png", std::ios::binary).write(buffer.data(), buffer.size());
+
+    inputFile = std::ifstream("VernamEncrypted.png", std::ios::binary);
+    buffer = std::vector<char>(std::istreambuf_iterator<char>(inputFile.rdbuf()), {});
+
+    for (size_t i = 0; i < buffer.size(); i++)
+        buffer[i] ^= keys[i];
+
+    std::ofstream("VernamResult.png", std::ios::binary).write(buffer.data(), buffer.size());
+}
+
+void RSA()
+{
+    long long PA = PRIME_NUMBERS[rand() % PRIME_NUMBERS.size()];
+    long long QA = PRIME_NUMBERS[rand() % PRIME_NUMBERS.size()];
+    long long NA = PA * QA;
+
+    long long FA = (PA - 1) * (QA - 1);
+
+    long long DA;
+    do
+    {
+        DA = rand() % FA;
+    } while (gcd(DA, FA).d != 1);
+
+    long long CA = gcd(FA, DA).y;
+    if (CA < 0) CA += FA;
+
+    std::ifstream inputFile(FILE_TO_ENCODE, std::ios::binary);
+    std::vector<char> buffer(std::istreambuf_iterator<char>(inputFile.rdbuf()), {});
+
+    std::ofstream outFile("EncodedRSA.png", std::ios::binary);
+    for (auto& it : buffer)
+    {
+        long long e = PowMod(it, DA, NA);
+        outFile.write(reinterpret_cast<char*>(&e), 8);
+    }
+
+    inputFile = std::ifstream("EncodedRSA.png", std::ios::binary);
+    buffer = std::vector<char>(std::istreambuf_iterator<char>(inputFile.rdbuf()), {});
+    outFile = std::ofstream("RSAResult.png", std::ios::binary);
+
+    for (size_t i = 0; i < buffer.size() / 8; i++)
+    {
+        long long it = *reinterpret_cast<long long*>(buffer.data() + i * 8);
+
+        char res = PowMod(it, CA, NA);
+
+        outFile.write(&res, 1);
+    }
 }
 
 }

@@ -58,7 +58,7 @@ constexpr std::array<long long, size> GetPrimeNumbersStartingFrom(long long star
 }
 
 
-constexpr const size_t PRIME_NUMBERS_ARRAY_SIZE = 150ull;
+constexpr const size_t PRIME_NUMBERS_ARRAY_SIZE = 16ull;
 constexpr const long long PRIME_NUMBERS_START_POSITION = 255;
 
 const auto PRIME_NUMBERS = CryptoFunctions::GetPrimeNumbersStartingFrom<PRIME_NUMBERS_ARRAY_SIZE>(PRIME_NUMBERS_START_POSITION);
